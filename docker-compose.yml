@@ -1,18 +1,24 @@
 version: '2'
+
 services:
   mailhog-secrets:
     image: twabscs/mailhog-secrets
     secrets:
-    - test
+    - mailhog
     environment:
       USERNAME: test
-      SECRET_NAME: test
+      SECRET_NAME: mailhog
     volumes:
       - appdata:/appdata
     labels:
       io.rancher.container.start_once: true
-  mailhog:
+  mailhog-main:
     image: twabscs/mailhog:latest
+    # environment:
+    #   MH_UI_WEB_PATH: ${mh_ui_web_path}
+    #   MH_SMTP_BIND_ADDR: ${mh_smtp_bind_addr}
+    stdin_open: true
+    tty: true
     entrypoint:
     - MailHog
     - -auth-file
@@ -22,6 +28,8 @@ services:
       - appdata:/appdata 
     labels:
       io.rancher.sidekicks: mailhog-secrets   
+      io.rancher.container.pull_image: always
+
 secrets:
-  test:
+  mailhog:
     external: 'true'
