@@ -1,0 +1,27 @@
+version: '2'
+services:
+  mailhog-secrets:
+    image: twabscs/mailhog-secrets
+    secrets:
+    - test
+    environment:
+      USERNAME: test
+      SECRET_NAME: test
+    volumes:
+      - appdata:/appdata
+    labels:
+      io.rancher.container.start_once: true
+  mailhog:
+    image: twabscs/mailhog:latest
+    entrypoint:
+    - MailHog
+    - -auth-file
+    - /appdata/auth.file
+    user: root
+    volumes:
+      - appdata:/appdata 
+    labels:
+      io.rancher.sidekicks: mailhog-secrets   
+secrets:
+  test:
+    external: 'true'
